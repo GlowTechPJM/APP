@@ -2,6 +2,11 @@ package com.example.app;
 
 import android.util.Log;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
+import java.io.IOException;
+
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -11,6 +16,9 @@ import okhttp3.WebSocketListener;
 public class WebSocketExample extends WebSocketListener {
 
     private WebSocket webSocket;
+    private final ObjectMapper objectMapper = new ObjectMapper();
+    private boolean isConnected = false;
+
 
     public WebSocketExample(String ipAddress) {
         String WS_URL = "ws://" + ipAddress + ":8080";
@@ -28,6 +36,7 @@ public class WebSocketExample extends WebSocketListener {
 
         Log.i("comprobar","Conexión abierta");
         notifyConnectionEstablished();
+        isConnected = true;
     }
 
     @Override
@@ -39,14 +48,31 @@ public class WebSocketExample extends WebSocketListener {
     @Override
     public void onClosed(WebSocket webSocket, int code, String reason) {
         Log.i("comprobar","Conexión cerrada");
+        isConnected = false;
     }
 
     @Override
     public void onFailure(WebSocket webSocket, Throwable t, Response response) {
         Log.i("comprobar","Error en la conexión WebSocket: " + t.getMessage());
+        isConnected = false;
     }
 
     private void notifyConnectionEstablished() {
         Log.i("comprobar","Conexión establecida con éxito");
+        isConnected = true;
+    }
+    public boolean isConnected() {
+        return isConnected;
+    }
+    public void sendJsonMessage(String messageContent) {
+        ObjectNode jsonMessage = objectMapper.createObjectNode();
+        jsonMessage.put("mensaje", messageContent);
+
+        try {
+            String jsonString = objectMapper.writeValueAsString(jsonMessage);
+            webSocket.send(jsonString);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

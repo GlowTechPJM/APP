@@ -2,6 +2,7 @@ package com.example.app;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -9,9 +10,10 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-public class MainActivity extends AppCompatActivity{
+public class MainActivity extends AppCompatActivity {
 
     private EditText ip;
+    private String ipText;
     private WebSocketExample webSocketExample;
 
     @Override
@@ -32,41 +34,44 @@ public class MainActivity extends AppCompatActivity{
 
     }
 
-    private void conctarse()  {
+    private void conctarse() {
         String ipText = ip.getText().toString();
         if (isValidIPAddress(ipText)) {
             webSocketExample = new WebSocketExample(ipText);
-            Toast.makeText(this, "Conexión con éxito", Toast.LENGTH_SHORT).show();
             try {
-                Thread.sleep(1000);
-                tomensajeria();
+
+                Thread.sleep(10000);
             } catch (InterruptedException e) {
-                throw new RuntimeException(e);
+                e.printStackTrace();
             }
-            tomensajeria();
+
+            boolean comp = webSocketExample.isConnected();
+            Log.i("conexion", String.valueOf(comp));
+            if (webSocketExample.isConnected()) {
+                Toast.makeText(this, "Conexión con éxito", Toast.LENGTH_SHORT).show();
+                tomensajeria();
             } else {
-                Toast.makeText(this, "La dirección IP introducida no es válida", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "No se pudo establecer la conexión WebSocket", Toast.LENGTH_SHORT).show();
             }
-
-        // Verificar si el texto introducido en ip es una dirección IP válida
-
+        } else {
+            Toast.makeText(this, "La dirección IP introducida no es válida", Toast.LENGTH_SHORT).show();
+        }
     }
 
     // Método para verificar si una cadena es una dirección IP válida
     private boolean isValidIPAddress(String ip) {
         String ipAddressRegex = "^([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\." +
-                                    "([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\." +
-                                    "([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\." +
-                                    "([01]?\\d\\d?|2[0-4]\\d|25[0-5])$";
+                "([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\." +
+                "([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\." +
+                "([01]?\\d\\d?|2[0-4]\\d|25[0-5])$";
 
         return ip.matches(ipAddressRegex);
     }
 
 
     public void tomensajeria() {
-            Intent intent = new Intent(MainActivity.this, mensajeria.class);
-            startActivity(intent);
+        Intent intent = new Intent(MainActivity.this, mensajeria.class);
+        startActivity(intent);
     }
-
 
 }

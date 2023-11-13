@@ -22,8 +22,6 @@ public class mensajeria extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.mensajeria);
-        String ipText = "192.168.0.103";
-        webSocketExample = new WebSocketExample(ipText);
         texto = findViewById(R.id.texto);
 
         Button enviar = findViewById(R.id.enviar);
@@ -58,7 +56,9 @@ public class mensajeria extends AppCompatActivity {
         String text = texto.getText().toString();
         String guardar = dia + ";" + hora + ";" + text + "\n";
         texto.setText("");
-
+        String ipAddress = "192.168.0.22";
+        webSocketExample = new WebSocketExample(ipAddress);
+        enviarMensajeJsonAlServidor(text);
         try {
             FileOutputStream fileOutputStream = openFileOutput("textos.txt", Context.MODE_APPEND);
             fileOutputStream.write(guardar.getBytes());
@@ -68,7 +68,11 @@ public class mensajeria extends AppCompatActivity {
             e.printStackTrace();
         }
     }
-
+    private void enviarMensajeJsonAlServidor(String mensaje) {
+        if (webSocketExample != null) {
+            webSocketExample.sendJsonMessage(mensaje);
+        }
+    }
     private void tolista() {
         Intent intent = new Intent(mensajeria.this, lista.class);
         startActivity(intent);
