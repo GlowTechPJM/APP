@@ -5,6 +5,9 @@ import android.util.Log;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.IOException;
 
 import okhttp3.OkHttpClient;
@@ -65,14 +68,16 @@ public class WebSocketExample extends WebSocketListener {
         return isConnected;
     }
     public void sendJsonMessage(String messageContent) {
-        ObjectNode jsonMessage = objectMapper.createObjectNode();
-        jsonMessage.put("mensaje", messageContent);
-
+        JSONObject objResponse = null;
         try {
-            String jsonString = objectMapper.writeValueAsString(jsonMessage);
-            webSocket.send(jsonString);
-        } catch (IOException e) {
-            e.printStackTrace();
+            objResponse = new JSONObject("{}");
+            objResponse.put("type", "Broadcast");
+            objResponse.put("from", "clientId");
+            objResponse.put("value", messageContent);
+            String mensaje = objResponse.toString();
+            webSocket.send(mensaje);
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
         }
     }
 }
