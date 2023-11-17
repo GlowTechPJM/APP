@@ -10,9 +10,17 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 public class mensajeria extends AppCompatActivity {
     private EditText texto;
@@ -23,7 +31,8 @@ public class mensajeria extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.mensajeria);
         texto = findViewById(R.id.texto);
-
+        Intent intent = getIntent();
+        String ipAddress = intent.getStringExtra("ip");
         Button enviar = findViewById(R.id.enviar);
         enviar.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -44,9 +53,68 @@ public class mensajeria extends AppCompatActivity {
         lista.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                tolista();
+                tolista(ipAddress);
             }
         });
+        Button volver = findViewById(R.id.backsel);
+        volver.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                toseleccion();
+            }
+        });
+    }
+    private void readFromFileandDelete(String fileName, String text){
+        try {
+            InputStream inputStream = openFileInput(fileName);
+            InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+
+            // Crear una lista para almacenar las líneas del archivo
+            ArrayList<String> lines = new ArrayList<>();
+
+            String line;
+            while ((line = bufferedReader.readLine()) != null) {
+                // Dividir la línea en partes utilizando el punto y coma como delimitador
+                String[] parts = line.split(";");
+
+                if (parts.length >= 3) {
+                    for (int i = 3; i < parts.length; i++) {
+                        parts[2] += ";" + parts[i];
+                    }
+                    if (!parts[2].equals(text)) {
+                        // Agregar la línea al ArrayList solo si no coincide con el texto que deseas eliminar
+                        lines.add(line);
+                    }
+                }
+            }
+
+            bufferedReader.close();
+            inputStreamReader.close();
+            inputStream.close();
+
+            // Sobrescribir el archivo con las líneas restantes
+            writeToFile(fileName, lines);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    // Método para escribir en el archivo
+    private void writeToFile(String fileName, List<String> lines) throws IOException {
+        FileOutputStream outputStream = openFileOutput(fileName, Context.MODE_PRIVATE);
+        OutputStreamWriter outputStreamWriter = new OutputStreamWriter(outputStream);
+        BufferedWriter bufferedWriter = new BufferedWriter(outputStreamWriter);
+
+        // Escribir las líneas en el archivo
+        for (String line : lines) {
+            bufferedWriter.write(line);
+            bufferedWriter.newLine();  // Agregar un salto de línea después de cada línea
+        }
+
+        bufferedWriter.close();
+        outputStreamWriter.close();
+        outputStream.close();
     }
 
     private void enviado() {
@@ -56,8 +124,9 @@ public class mensajeria extends AppCompatActivity {
         String text = texto.getText().toString();
         String guardar = dia + ";" + hora + ";" + text + "\n";
         texto.setText("");
-        String ipAddress = "192.168.0.22";
-        webSocketExample = new WebSocketExample(ipAddress);
+        Intent intent = getIntent();
+        String ipAddress = intent.getStringExtra("ip");
+        webSocketExample = MyApp.webSocketExample;
         enviarMensajeJsonAlServidor(text);
         try {
             FileOutputStream fileOutputStream = openFileOutput("textos.txt", Context.MODE_APPEND);
@@ -73,13 +142,22 @@ public class mensajeria extends AppCompatActivity {
             webSocketExample.sendJsonMessage(mensaje);
         }
     }
-    private void tolista() {
+    private void tolista(String ipText) {
         Intent intent = new Intent(mensajeria.this, lista.class);
+        intent.putExtra("ip",ipText);
         startActivity(intent);
+        finish();
+    }
+    public void toseleccion() {
+        Intent intent = new Intent(mensajeria.this, selecion.class);
+        startActivity(intent);
+        finish();
     }
     private void tomain() {
         Intent intent = new Intent(mensajeria.this, MainActivity.class);
         startActivity(intent);
+        webSocketExample.disconnect();
+        finish();
     }
 }
 

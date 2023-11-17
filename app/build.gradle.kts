@@ -32,6 +32,7 @@ android {
 }
 
 dependencies {
+    implementation ("androidx.recyclerview:recyclerview:1.2.1")
     implementation ("com.fasterxml.jackson.core:jackson-databind:2.12.5")
     implementation("com.squareup.okhttp3:okhttp:4.9.0")
     implementation("androidx.appcompat:appcompat:1.6.1")

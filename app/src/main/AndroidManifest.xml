@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools">
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
         android:allowBackup="true"
@@ -32,6 +33,25 @@
             android:name=".mensajeria">
 
         </activity>
+        <activity
+            android:name=".int_sesio">
+
+        </activity>
+        <activity
+            android:name=".MyApp">
+
+        </activity>
+        <activity
+            android:name=".selecion">
+
+        </activity>
+        <activity
+            android:name=".imagenes">
+
+        </activity>
+
+
+
     </application>
 
 </manifest>

@@ -9,18 +9,21 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.io.Serializable;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.WebSocket;
 import okhttp3.WebSocketListener;
+import okhttp3.internal.ws.RealWebSocket;
 
-public class WebSocketExample extends WebSocketListener {
+public class WebSocketExample extends WebSocketListener  {
 
     private WebSocket webSocket;
     private final ObjectMapper objectMapper = new ObjectMapper();
     private boolean isConnected = false;
+    private boolean isBalid = false;
 
 
     public WebSocketExample(String ipAddress) {
@@ -33,19 +36,45 @@ public class WebSocketExample extends WebSocketListener {
 
         webSocket = client.newWebSocket(request, this);
     }
-
+    public void disconnect() {
+        if (webSocket != null) {
+            webSocket.cancel();
+        }
+    }
     @Override
     public void onOpen(WebSocket webSocket, Response response) {
 
         Log.i("comprobar","Conexión abierta");
+        incio();
         notifyConnectionEstablished();
         isConnected = true;
     }
 
     @Override
     public void onMessage(WebSocket webSocket, String text) {
-        // Se ha recibido un mensaje
-        // Puedes manejar el mensaje recibido aquí
+        try {
+            // Parsear el JSON recibido
+            JSONObject jsonMessage = new JSONObject(text);
+
+            // Obtener el valor asociado con la clave "validacion"
+            String validacion = jsonMessage.optString("validacion");
+
+            // Verificar el valor de "validacion"
+            if ("correcto".equals(validacion)) {
+                isBalid = true;
+                // El valor es correcto, realiza las acciones correspondientes
+                Log.i("comprobar", "Mensaje recibido: correcto");
+            } else if ("incorrecto".equals(validacion)) {
+                // El valor es incorrecto, realiza las acciones correspondientes
+                Log.i("comprobar", "Mensaje recibido: incorrecto");
+            } else {
+                // Valor desconocido, manejar según sea necesario
+                Log.i("comprobar", "Mensaje recibido con valor desconocido de validacion: " + validacion);
+            }
+
+        } catch (JSONException e) {
+            Log.e("comprobar", "Error al parsear el mensaje JSON: " + e.getMessage());
+        }
     }
 
     @Override
@@ -67,13 +96,51 @@ public class WebSocketExample extends WebSocketListener {
     public boolean isConnected() {
         return isConnected;
     }
+        public boolean isBalid() {
+        return isBalid;
+    }
+    public void incio() {
+        JSONObject objResponse = null;
+        try {
+            objResponse = new JSONObject("{}");
+            objResponse.put("platform", "android");
+            String mensaje = objResponse.toString();
+            webSocket.send(mensaje);
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public void sendJsonMessage(String messageContent) {
         JSONObject objResponse = null;
         try {
             objResponse = new JSONObject("{}");
-            objResponse.put("type", "Broadcast");
-            objResponse.put("from", "clientId");
-            objResponse.put("value", messageContent);
+            objResponse.put("platform", "android");
+            objResponse.put("message", messageContent);
+            String mensaje = objResponse.toString();
+            webSocket.send(mensaje);
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    public void sendJsonimg(String messageContent) {
+        JSONObject objResponse = null;
+        try {
+            objResponse = new JSONObject("{}");
+            objResponse.put("platform", "android");
+            objResponse.put("imagen", messageContent);
+            String mensaje = objResponse.toString();
+            webSocket.send(mensaje);
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    public void sendJsonMessageusu(String usuario,String contra) {
+        JSONObject objResponse = null;
+        try {
+            objResponse = new JSONObject("{}");
+            objResponse.put("usuario", usuario);
+            objResponse.put("password", contra);
             String mensaje = objResponse.toString();
             webSocket.send(mensaje);
         } catch (JSONException e) {

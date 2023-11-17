@@ -22,6 +22,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         ip = findViewById(R.id.ip);
+        ip.setText(MyApp.ip);
 
         Button connectar = findViewById(R.id.connectar);
         connectar.setOnClickListener(new View.OnClickListener() {
@@ -36,6 +37,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void conctarse() {
         String ipText = ip.getText().toString();
+        MyApp.ip = ipText;
         if (isValidIPAddress(ipText)) {
             webSocketExample = new WebSocketExample(ipText);
             try {
@@ -49,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
             Log.i("conexion", String.valueOf(comp));
             if (webSocketExample.isConnected()) {
                 Toast.makeText(this, "Conexión con éxito", Toast.LENGTH_SHORT).show();
-                tomensajeria();
+                toinicio();
             } else {
                 Toast.makeText(this, "No se pudo establecer la conexión WebSocket", Toast.LENGTH_SHORT).show();
             }
@@ -69,9 +71,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    public void tomensajeria() {
-        Intent intent = new Intent(MainActivity.this, mensajeria.class);
+    public void toinicio() {
+        String ipText = ip.getText().toString();
+        Intent intent = new Intent(MainActivity.this, int_sesio.class);
+        MyApp.webSocketExample = webSocketExample;
+        intent.putExtra("ip",ipText);
         startActivity(intent);
+        finish();
     }
 
 }
