@@ -41,7 +41,6 @@ public class MainActivity extends AppCompatActivity {
         if (isValidIPAddress(ipText)) {
             webSocketExample = new WebSocketExample(ipText);
             try {
-
                 Thread.sleep(2000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
