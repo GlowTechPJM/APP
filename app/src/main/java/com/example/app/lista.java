@@ -6,6 +6,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -33,7 +35,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
-public class lista extends AppCompatActivity {
+public class lista extends AppCompatActivity{
     private WebSocketExample webSocketExample;
 
     class item {
@@ -50,7 +52,7 @@ public class lista extends AppCompatActivity {
     private String selectedDia;
     private String selectedHora;
     private String selectedTexto;
-
+    private MenuItem receiveMenuItem;
     ArrayList<item> items;
     ArrayAdapter<item> adapter;
 
@@ -59,8 +61,9 @@ public class lista extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.lista_mensajes);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         webSocketExample = MyApp.webSocketExample;
-
+        getSupportActionBar().setDisplayHomeAsUpEnabled(false);
 
         items = new ArrayList<>();
 
@@ -124,6 +127,27 @@ public class lista extends AppCompatActivity {
                 tomensajeria();
             }
         });
+    }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main_menu, menu);
+
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == R.id.action_button) {
+            // Aquí maneja el clic en tu botón de la ActionBar
+            // Puedes agregar cualquier lógica que desees ejecutar al hacer clic en el botón.
+
+            Toast.makeText(this, "Botón de ActionBar clickeado", Toast.LENGTH_SHORT).show();
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
     private void showYesNoAlertDialog(String selectedTexto, String texto_eliminar) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);

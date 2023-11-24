@@ -3,7 +3,9 @@
     xmlns:tools="http://schemas.android.com/tools">
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
 
     <application
         android:allowBackup="true"
@@ -11,14 +13,15 @@
         android:networkSecurityConfig="@xml/network_security_config"
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_launcher"
-        android:label="@string/app_name"
+        android:label="Glowtech"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.App"
+        android:theme="@style/Base.Theme.App"
         tools:targetApi="31">
         <activity
             android:name=".MainActivity"
-            android:exported="true">
+            android:exported="true"
+            android:theme="@style/AppTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -26,15 +29,21 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".lista">
+            android:name=".lista"
+            android:exported="true"
+            android:theme="@style/AppTheme">
 
         </activity>
         <activity
-            android:name=".mensajeria">
+            android:name=".mensajeria"
+            android:exported="true"
+            android:theme="@style/AppTheme">
 
         </activity>
         <activity
-            android:name=".int_sesio">
+            android:name=".int_sesio"
+            android:exported="true"
+            android:theme="@style/AppTheme">
 
         </activity>
         <activity
@@ -42,11 +51,15 @@
 
         </activity>
         <activity
-            android:name=".selecion">
+            android:name=".selecion"
+            android:exported="true"
+            android:theme="@style/AppTheme">
 
         </activity>
         <activity
-            android:name=".imagenes">
+            android:name=".imagenes"
+            android:exported="true"
+            android:theme="@style/AppTheme">
 
         </activity>
 

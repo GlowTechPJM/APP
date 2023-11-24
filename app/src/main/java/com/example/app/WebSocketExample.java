@@ -23,7 +23,7 @@ public class WebSocketExample extends WebSocketListener  {
     private WebSocket webSocket;
     private final ObjectMapper objectMapper = new ObjectMapper();
     private boolean isConnected = false;
-    private boolean isBalid = false;
+    private boolean isValid = true;
 
 
     public WebSocketExample(String ipAddress) {
@@ -39,7 +39,6 @@ public class WebSocketExample extends WebSocketListener  {
     public void disconnect() {
         if (webSocket != null) {
             webSocket.cancel();
-            fin();
         }
     }
     @Override
@@ -65,12 +64,12 @@ public class WebSocketExample extends WebSocketListener  {
 
             if (jsonMessage.has("validacion") && jsonMessage.getString("validacion").equals("correcto")) {
                 Log.i("WebSocket", "Mensaje de conexión recibido");
-                isBalid = true;
+                isValid = true;
 
             } else   if (jsonMessage.has("validacion") && jsonMessage.getString("validacion").equals("incorrecto")) {
                 // El valor es incorrecto, realiza las acciones correspondientes
                 Log.i("comprobar", "Mensaje recibido: incorrecto");
-                isBalid = false;
+                isValid = false;
             }
 
         } catch (JSONException e) {
@@ -82,14 +81,12 @@ public class WebSocketExample extends WebSocketListener  {
     @Override
     public void onClosed(WebSocket webSocket, int code, String reason) {
         Log.i("comprobar","Conexión cerrada");
-        fin();
         isConnected = false;
     }
 
     @Override
     public void onFailure(WebSocket webSocket, Throwable t, Response response) {
         Log.i("comprobar","Error en la conexión WebSocket: " + t.getMessage());
-        fin();
         isConnected = false;
     }
 
@@ -100,8 +97,8 @@ public class WebSocketExample extends WebSocketListener  {
     public boolean isConnected() {
         return isConnected;
     }
-        public boolean isBalid() {
-        return isBalid;
+    public boolean isValid() {
+        return isValid;
     }
     public void incio() {
         JSONObject objResponse = null;
@@ -114,23 +111,12 @@ public class WebSocketExample extends WebSocketListener  {
             throw new RuntimeException(e);
         }
     }
-    public void fin() {
-        JSONObject objResponse = null;
-        try {
-            objResponse = new JSONObject("{}");
-            objResponse.put("disconnect", "android");
-            String mensaje = objResponse.toString();
-            webSocket.send(mensaje);
-        } catch (JSONException e) {
-            throw new RuntimeException(e);
-        }
-    }
 
     public void sendJsonMessage(String messageContent) {
         JSONObject objResponse = null;
         try {
             objResponse = new JSONObject("{}");
-            objResponse.put("platform", "android");
+            objResponse.put("msgPlatform", "android");
             objResponse.put("message", messageContent);
             String mensaje = objResponse.toString();
             webSocket.send(mensaje);
@@ -144,6 +130,7 @@ public class WebSocketExample extends WebSocketListener  {
             objResponse = new JSONObject("{}");
             objResponse.put("imgPlatform", "android");
             objResponse.put("imagen", messageContent);
+            Log.i("",messageContent);
             String mensaje = objResponse.toString();
             webSocket.send(mensaje);
         } catch (JSONException e) {
@@ -154,6 +141,7 @@ public class WebSocketExample extends WebSocketListener  {
         JSONObject objResponse = null;
         try {
             objResponse = new JSONObject("{}");
+            objResponse.put("userPlatform", "android");
             objResponse.put("user", usuario);
             objResponse.put("password", contra);
             String mensaje = objResponse.toString();

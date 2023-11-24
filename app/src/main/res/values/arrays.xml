@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <array name="todas_las_imagenes">
-        <item>@drawable/img1</item>
-        <item>@drawable/img2</item>
-        <item>@drawable/img3</item>
-        <!-- Agrega más elementos según sea necesario -->
-    </array>
-</resources>

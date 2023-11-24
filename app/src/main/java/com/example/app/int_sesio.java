@@ -2,6 +2,8 @@ package com.example.app;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -11,8 +13,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 public class int_sesio extends AppCompatActivity {
     private EditText usuario, contra;
-
     private WebSocketExample webSocketExample;
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.session);
@@ -29,8 +31,28 @@ public class int_sesio extends AppCompatActivity {
                 inciciar();
             }
         });
+    }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main_menu, menu);
+        MenuItem myButton = menu.findItem(R.id.action_button);
+        myButton.setVisible(false);
+        return true;
+    }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
 
+        if (id == R.id.action_button) {
+            // Aquí maneja el clic en tu botón de la ActionBar
+            // Puedes agregar cualquier lógica que desees ejecutar al hacer clic en el botón.
+
+            Toast.makeText(this, "Botón de ActionBar clickeado", Toast.LENGTH_SHORT).show();
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
     private void inciciar(){
         String usu = usuario.getText().toString();
@@ -45,7 +67,7 @@ public class int_sesio extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        if(webSocketExample.isBalid()){
+        if(webSocketExample.isValid()){
             tomensajeria();
         }else {
             Toast.makeText(int_sesio.this, "usuario o contraseña incorectos", Toast.LENGTH_SHORT).show();
@@ -62,8 +84,8 @@ public class int_sesio extends AppCompatActivity {
     }
     public void tomensajeria() {
         Intent intent = new Intent(int_sesio.this, selecion.class);
-
         startActivity(intent);
+        finish();
     }
     private void enviarMensajeJsonAlServidor(String usu, String contra) {
         if (webSocketExample != null) {

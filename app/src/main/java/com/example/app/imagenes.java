@@ -8,6 +8,8 @@ import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.util.Base64;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -41,7 +43,7 @@ public class imagenes extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.imagenes);
         webSocketExample = MyApp.webSocketExample;
-
+        getSupportActionBar().setDisplayHomeAsUpEnabled(false);
         records = new ArrayList<>();
         imgs();
 
@@ -143,14 +145,36 @@ public class imagenes extends AppCompatActivity {
             webSocketExample.sendJsonimg(mensaje);
         }
     }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main_menu, menu);
+
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == R.id.action_button) {
+            // Aquí maneja el clic en tu botón de la ActionBar
+            // Puedes agregar cualquier lógica que desees ejecutar al hacer clic en el botón.
+
+            Toast.makeText(this, "Botón de ActionBar clickeado", Toast.LENGTH_SHORT).show();
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
     // Método para obtener la representación en base64 de una imagen
     private String getBase64Image(int resId) {
         Bitmap bitmap = BitmapFactory.decodeResource(getResources(), resId);
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
         byte[] byteArray = byteArrayOutputStream.toByteArray();
-        return Base64.encodeToString(byteArray, Base64.DEFAULT);
+        return Base64.encodeToString(byteArray, Base64.NO_WRAP);
     }
+
 }
 
 

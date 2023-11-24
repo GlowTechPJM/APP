@@ -3,6 +3,8 @@ package com.example.app;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -25,11 +27,12 @@ import java.util.List;
 public class mensajeria extends AppCompatActivity {
     private EditText texto;
     private WebSocketExample webSocketExample;
-
+    private MenuItem receiveMenuItem;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.mensajeria);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(false);
         texto = findViewById(R.id.texto);
         Intent intent = getIntent();
         String ipAddress = intent.getStringExtra("ip");
@@ -64,6 +67,28 @@ public class mensajeria extends AppCompatActivity {
             }
         });
     }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == R.id.action_button) {
+            // Aquí maneja el clic en tu botón de la ActionBar
+            // Puedes agregar cualquier lógica que desees ejecutar al hacer clic en el botón.
+
+            Toast.makeText(this, "Botón de ActionBar clickeado", Toast.LENGTH_SHORT).show();
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+
     private void readFromFileandDelete(String fileName, String text){
         try {
             InputStream inputStream = openFileInput(fileName);

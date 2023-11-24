@@ -3,10 +3,22 @@ package com.example.app;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.os.Build;
+import android.app.Notification;
+import android.app.PendingIntent;
+import android.content.Intent;
+import android.graphics.BitmapFactory;
+import android.media.RingtoneManager;
+import android.net.Uri;
+import androidx.core.app.NotificationCompat;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -20,7 +32,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         ip = findViewById(R.id.ip);
         ip.setText(MyApp.ip);
 
@@ -32,9 +43,29 @@ public class MainActivity extends AppCompatActivity {
                 conctarse();
             }
         });
-
+    }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main_menu, menu);
+        MenuItem myButton = menu.findItem(R.id.action_button);
+        myButton.setVisible(false);
+        return true;
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == R.id.action_button) {
+            // Aquí maneja el clic en tu botón de la ActionBar
+            // Puedes agregar cualquier lógica que desees ejecutar al hacer clic en el botón.
+
+            Toast.makeText(this, "Botón de ActionBar clickeado", Toast.LENGTH_SHORT).show();
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
     private void conctarse() {
         String ipText = ip.getText().toString();
         MyApp.ip = ipText;
@@ -58,8 +89,6 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(this, "La dirección IP introducida no es válida", Toast.LENGTH_SHORT).show();
         }
     }
-
-    // Método para verificar si una cadena es una dirección IP válida
     private boolean isValidIPAddress(String ip) {
         String ipAddressRegex = "^([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\." +
                 "([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\." +
