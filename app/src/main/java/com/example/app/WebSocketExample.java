@@ -1,6 +1,11 @@
 package com.example.app;
 
+import android.app.Activity;
+import android.content.Context;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -20,10 +25,15 @@ import okhttp3.internal.ws.RealWebSocket;
 
 public class WebSocketExample extends WebSocketListener  {
 
+    private Context context;
     private WebSocket webSocket;
+    private Handler handler = new Handler(Looper.getMainLooper()) ;
     private final ObjectMapper objectMapper = new ObjectMapper();
     private boolean isConnected = false;
-    private boolean isValid = true;
+
+    private int connxions = 0;
+
+    private boolean isValid = false;
 
 
     public WebSocketExample(String ipAddress) {
@@ -56,17 +66,45 @@ public class WebSocketExample extends WebSocketListener  {
             // Parsear el JSON recibido
             JSONObject jsonMessage = new JSONObject(text);
             Log.i("recivido",jsonMessage.toString());
+            if (jsonMessage.has("action") && jsonMessage.getString("action").equals("listas")) {
+                MyApp.lista_conct_A= jsonMessage.getString("android");
+                MyApp.lista_conct_D= jsonMessage.getString("desk");
+            }
+            if (jsonMessage.has("type")){
+                Log.i("recivido","1");
+            }
+            if (jsonMessage.has("type") && jsonMessage.getString("type").equals("broadcast")) {
+                Log.i("recivido","1");
+                if (jsonMessage.has("action") && jsonMessage.getString("action").equals("connect")){
+                    Log.i("recivido","2");
+                    MyApp.conexion = jsonMessage.getString("user");
+                    mostrarToast(MyApp.conexion+" se ha conectado");
 
 
-            // Obtener el valor asociado con la clave "validacion"
-            String validacion = jsonMessage.optString("type");
+
+                }
+                if (jsonMessage.has("action") && jsonMessage.getString("action").equals("disconnect")){
+                    Log.i("recivido","2");
+                    MyApp.conexion = jsonMessage.getString("user");
+                    mostrarToast(MyApp.conexion+" se ha desconectado");
+
+
+                }
+                if (jsonMessage.has("action") && jsonMessage.getString("action").equals("message")){
+                    Log.i("recivido","2");
+                    MyApp.envio = jsonMessage.getString("action");
+                    mostrarToast(MyApp.conexion+" ha enviado un mensaje");
+
+                }
+            }
 
 
             if (jsonMessage.has("validacion") && jsonMessage.getString("validacion").equals("correcto")) {
                 Log.i("WebSocket", "Mensaje de conexión recibido");
                 isValid = true;
 
-            } else   if (jsonMessage.has("validacion") && jsonMessage.getString("validacion").equals("incorrecto")) {
+            }
+            if (jsonMessage.has("validacion") && jsonMessage.getString("validacion").equals("incorrecto")) {
                 // El valor es incorrecto, realiza las acciones correspondientes
                 Log.i("comprobar", "Mensaje recibido: incorrecto");
                 isValid = false;
@@ -75,6 +113,17 @@ public class WebSocketExample extends WebSocketListener  {
         } catch (JSONException e) {
             Log.e("comprobar", "Error al parsear el mensaje JSON: " + e.getMessage());
 
+        }
+    }
+    private void mostrarToast(final String mensaje) {
+        // Utiliza el handler para mostrar el Toast en el hilo principal
+        if (handler != null) {
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(MyApp.Mycontext, mensaje, Toast.LENGTH_SHORT).show();
+                }
+            });
         }
     }
 
@@ -118,6 +167,18 @@ public class WebSocketExample extends WebSocketListener  {
             objResponse = new JSONObject("{}");
             objResponse.put("msgPlatform", "android");
             objResponse.put("message", messageContent);
+            String mensaje = objResponse.toString();
+            webSocket.send(mensaje);
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    public void sendJsonconected() {
+        JSONObject objResponse = null;
+        try {
+            objResponse = new JSONObject("{}");
+            objResponse.put("cntPlatform", "android");
+            objResponse.put("connected", "");
             String mensaje = objResponse.toString();
             webSocket.send(mensaje);
         } catch (JSONException e) {

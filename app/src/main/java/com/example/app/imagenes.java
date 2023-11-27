@@ -25,7 +25,7 @@ import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 
 public class imagenes extends AppCompatActivity {
-
+    private Context context;
     private WebSocketExample webSocketExample;
     private ArrayList<Record> records;
     private ImageAdapter adapter;
@@ -43,6 +43,7 @@ public class imagenes extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.imagenes);
         webSocketExample = MyApp.webSocketExample;
+        MyApp.Mycontext = this;
         getSupportActionBar().setDisplayHomeAsUpEnabled(false);
         records = new ArrayList<>();
         imgs();
@@ -69,6 +70,7 @@ public class imagenes extends AppCompatActivity {
             }
         });
     }
+
 
     public void imgs() {
         int[] imagenes = {R.drawable.img1, R.drawable.img2, R.drawable.img3, R.drawable.img4, R.drawable.img5};
@@ -121,7 +123,6 @@ public class imagenes extends AppCompatActivity {
                     String base64Image = getBase64Image(imagenResId);
                     // Mostrar el Toast con la representación en base64
                     enviarMensajeJsonAlServidor(base64Image);
-                    Toast.makeText(context, "imagen enviada", Toast.LENGTH_SHORT).show();
                 }
             });
         }
@@ -148,7 +149,6 @@ public class imagenes extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main_menu, menu);
-
         return true;
     }
 
@@ -157,8 +157,13 @@ public class imagenes extends AppCompatActivity {
         int id = item.getItemId();
 
         if (id == R.id.action_button) {
-            // Aquí maneja el clic en tu botón de la ActionBar
-            // Puedes agregar cualquier lógica que desees ejecutar al hacer clic en el botón.
+            webSocketExample.sendJsonconected();
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            MyApp.lista_conetados(this,MyApp.lista_conct_A,MyApp.lista_conct_D);
 
             Toast.makeText(this, "Botón de ActionBar clickeado", Toast.LENGTH_SHORT).show();
             return true;

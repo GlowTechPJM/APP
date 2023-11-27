@@ -34,12 +34,10 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         ip = findViewById(R.id.ip);
         ip.setText(MyApp.ip);
-
         Button connectar = findViewById(R.id.connectar);
         connectar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
                 conctarse();
             }
         });
@@ -50,21 +48,6 @@ public class MainActivity extends AppCompatActivity {
         MenuItem myButton = menu.findItem(R.id.action_button);
         myButton.setVisible(false);
         return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-
-        if (id == R.id.action_button) {
-            // Aquí maneja el clic en tu botón de la ActionBar
-            // Puedes agregar cualquier lógica que desees ejecutar al hacer clic en el botón.
-
-            Toast.makeText(this, "Botón de ActionBar clickeado", Toast.LENGTH_SHORT).show();
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
     }
     private void conctarse() {
         String ipText = ip.getText().toString();

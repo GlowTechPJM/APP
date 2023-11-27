@@ -1,5 +1,6 @@
 package com.example.app;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
@@ -12,13 +13,15 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 public class int_sesio extends AppCompatActivity {
+    private Context context;
     private EditText usuario, contra;
     private WebSocketExample webSocketExample;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.session);
-
+        webSocketExample = MyApp.webSocketExample;
+        MyApp.Mycontext = this;
         usuario = findViewById(R.id.usuario);
         contra = findViewById(R.id.contra);
         usuario.setText(MyApp.usuario);
@@ -32,6 +35,7 @@ public class int_sesio extends AppCompatActivity {
             }
         });
     }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main_menu, menu);
@@ -68,6 +72,7 @@ public class int_sesio extends AppCompatActivity {
         }
 
         if(webSocketExample.isValid()){
+
             tomensajeria();
         }else {
             Toast.makeText(int_sesio.this, "usuario o contraseña incorectos", Toast.LENGTH_SHORT).show();

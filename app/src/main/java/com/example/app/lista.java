@@ -61,8 +61,8 @@ public class lista extends AppCompatActivity{
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.lista_mensajes);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         webSocketExample = MyApp.webSocketExample;
+        MyApp.Mycontext = this;
         getSupportActionBar().setDisplayHomeAsUpEnabled(false);
 
         items = new ArrayList<>();
@@ -112,11 +112,6 @@ public class lista extends AppCompatActivity{
                 String texto_eliminar = selectedDia +";"+selectedHora +";"+selectedTexto;
 
                 showYesNoAlertDialog(selectedTexto,texto_eliminar);
-
-                // Mostrar un Toast con la información del elemento seleccionado
-
-
-
             }
         });
 
@@ -128,6 +123,7 @@ public class lista extends AppCompatActivity{
             }
         });
     }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main_menu, menu);
@@ -140,9 +136,13 @@ public class lista extends AppCompatActivity{
         int id = item.getItemId();
 
         if (id == R.id.action_button) {
-            // Aquí maneja el clic en tu botón de la ActionBar
-            // Puedes agregar cualquier lógica que desees ejecutar al hacer clic en el botón.
-
+            webSocketExample.sendJsonconected();
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            MyApp.lista_conetados(this,MyApp.lista_conct_A,MyApp.lista_conct_D);
             Toast.makeText(this, "Botón de ActionBar clickeado", Toast.LENGTH_SHORT).show();
             return true;
         }

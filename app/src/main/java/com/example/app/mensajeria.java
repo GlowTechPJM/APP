@@ -33,6 +33,8 @@ public class mensajeria extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.mensajeria);
         getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+        webSocketExample = MyApp.webSocketExample;
+        MyApp.Mycontext = this;
         texto = findViewById(R.id.texto);
         Intent intent = getIntent();
         String ipAddress = intent.getStringExtra("ip");
@@ -73,14 +75,19 @@ public class mensajeria extends AppCompatActivity {
         return true;
     }
 
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
         if (id == R.id.action_button) {
-            // Aquí maneja el clic en tu botón de la ActionBar
-            // Puedes agregar cualquier lógica que desees ejecutar al hacer clic en el botón.
-
+            webSocketExample.sendJsonconected();
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            MyApp.lista_conetados(this,MyApp.lista_conct_A,MyApp.lista_conct_D);
             Toast.makeText(this, "Botón de ActionBar clickeado", Toast.LENGTH_SHORT).show();
             return true;
         }
@@ -157,7 +164,6 @@ public class mensajeria extends AppCompatActivity {
             FileOutputStream fileOutputStream = openFileOutput("textos.txt", Context.MODE_APPEND);
             fileOutputStream.write(guardar.getBytes());
             fileOutputStream.close();
-            Toast.makeText(this, "mensaje enviado", Toast.LENGTH_SHORT).show();
         } catch (Exception e) {
             e.printStackTrace();
         }
